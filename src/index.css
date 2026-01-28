@@ -1,0 +1,54 @@
+/* 🔹 PrimeReact Card Hover Effect */
+.sku-card {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.sku-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔹 Highlight when days < 30 */
+.sku-card.danger {
+  border: 2px solid #e53935;
+  background: #fff5f5;
+}
+
+/* 🔹 Image */
+.sku-image {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+/* 🔹 Text spacing */
+.sku-code {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 2px 0;
+}
+
+.sku-days {
+  font-size: 13px;
+}
+
+/* 🔹 Simple Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  max-width: 400px;
+}
