@@ -1,20 +1,19 @@
 import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
-import UploadPage from "./pages/UploadPage";
-import ReorderTable from "./pages/ReorderTable";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./AppRoutes";
 
 const App = () => {
-  const toast = useRef(null); // 🔹 Global toast
+  const toast = useRef(null);
 
   return (
-    <>
+    <BrowserRouter>
       {/* Global Toast */}
       <Toast ref={toast} />
 
-      <UploadPage toast={toast} />
-      <hr />
-      <ReorderTable toast={toast} />
-    </>
+      {/* App with Navbar + Sidebar */}
+      <AppRoutes toast={toast} />
+    </BrowserRouter>
   );
 };
 

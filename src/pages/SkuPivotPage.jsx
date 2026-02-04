@@ -18,7 +18,7 @@ export default function SkuPivotPage() {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:5000/api/pivot/sku-date",
+        "https://reorder-point-backendcode.onrender.com/api/pivot/sku-date",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

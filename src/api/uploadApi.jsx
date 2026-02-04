@@ -1,13 +1,16 @@
 import axios from "axios";
 
-const BASE_URL = "https://reorder-point-backendcode.onrender.com";
+const BASE_URL = "http://localhost:5000/api/upload";
+// const BASE_URL = "https://reorder-point-backendcode.onrender.com/api/upload";
 
-// Upload Excel file (FormData) to backend
-export const uploadFile = (type, file) => {
+export const uploadFile = async (type, file) => {
   const formData = new FormData();
-  formData.append("file", file); // Must be "file"
+  formData.append("file", file);
 
-  return axios.post(`${BASE_URL}/api/upload/${type}`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const response = await axios.post(
+    `${BASE_URL}/${type}-direct`,
+    formData
+  );
+
+  return response.data;
 };

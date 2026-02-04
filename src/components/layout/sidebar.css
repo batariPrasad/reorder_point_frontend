@@ -1,0 +1,53 @@
+.sidebar {
+  position: fixed;
+  top: 60px; /* height of navbar */
+  left: 0;
+  height: calc(100vh - 60px);
+  width: 60px;
+  background: #1e293b;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Expand on hover */
+.sidebar:hover {
+  width: 220px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  color: #cbd5e1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sidebar-item:hover {
+  background: #334155;
+  color: white;
+}
+
+.sidebar-item i {
+  font-size: 18px;
+  min-width: 24px;
+}
+
+/* Hide text by default */
+.label {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Show text on hover */
+.sidebar:hover .label {
+  opacity: 1;
+}
+
+/* Active menu */
+.sidebar-item.active {
+  background: #0ea5e9;
+  color: white;
+}

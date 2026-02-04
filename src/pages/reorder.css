@@ -1,0 +1,54 @@
+/* Fixed width dialog */
+.sku-dialog {
+  width: 400px !important; /* Fixed width */
+  max-width: 95vw !important; /* fallback for very small screens */
+}
+
+/* Dialog content */
+.sku-dialog .p-dialog-content {
+  display: flex;
+  flex-direction: column; /* stack image + text */
+  align-items: center;    /* center horizontally */
+  justify-content: center;
+  overflow-x: hidden !important; /* remove horizontal scroll */
+  overflow-y: auto;              /* vertical scroll if content too tall */
+  padding: 1rem;
+  box-sizing: border-box;
+  text-align: center;            /* center all text */
+}
+/* Dialog content text block */
+.sku-dialog-content {
+  padding: 0;             /* remove extra padding */
+  margin: 0;              /* remove extra margin */
+  line-height: 1.2;       /* reduce line spacing */
+  font-size: 0.9rem;      /* slightly smaller text */
+  text-align: center;     /* keep it centered */
+}
+
+/* Optional: reduce spacing between paragraphs */
+.sku-dialog-content p {
+  margin: 0.2rem 0;       /* vertical margin between lines */
+}
+
+/* Image inside dialog */
+.sku-dialog-image {
+  max-width: 60%;   /* never exceed dialog width */
+  height: auto;
+  margin-bottom: 1rem;
+  display: block;
+  object-fit: contain;
+}
+
+
+
+
+/* Mobile optimization */
+@media (max-width: 576px) {
+  .sku-dialog {
+    width: 95vw;
+  }
+
+  .sku-dialog-image {
+    max-width: 180px;
+  }
+}

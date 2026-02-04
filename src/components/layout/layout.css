@@ -1,0 +1,44 @@
+/* Top Navbar */
+.top-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 60px;              /* below navbar */
+  left: 0;
+  height: calc(100vh - 60px);
+  width: 60px;            /* collapsed width */
+  background: #f4f4f4;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 999;
+}
+
+/* Expand on hover */
+.sidebar:hover {
+  width: 250px;
+}
+
+/* Main content */
+.main-content {
+  margin-top: 60px;
+  margin-left: 60px;
+  padding: 16px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+/* Adjust main content when sidebar expands */
+.sidebar:hover ~ .main-content {
+  margin-left: 250px;
+}
