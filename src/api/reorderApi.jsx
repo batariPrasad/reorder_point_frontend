@@ -21,13 +21,13 @@
 
 import axios from "axios";
 
-// const API = axios.create({ baseURL: "https://reorder-point-backendcode.onrender.com/api/reorder" });
+const API = axios.create({ baseURL: "https://reorder-point-backendcode.onrender.com/api/reorder" });
 
 
 export const fetchReorder = (warehouse) => {
   return axios.get(
-    `http://localhost:5000/api/reorder`,
-    // `https://reorder-point-backendcode.onrender.com/api/reorder`,
+    // `http://localhost:5000/api/reorder`,
+    `https://reorder-point-backendcode.onrender.com/api/reorder`,
     {
       params: { warehouse }
     }
@@ -35,24 +35,26 @@ export const fetchReorder = (warehouse) => {
 };
 
 export const generateReorder = () =>
-  // axios.post("https://reorder-point-backendcode.onrender.com/api/reorder/generate");
-  axios.post("http://localhost:5000/api/reorder/generate");
+  axios.post("https://reorder-point-backendcode.onrender.com/api/reorder/generate");
+  // axios.post("http://localhost:5000/api/reorder/generate");
 
 // export const syncInventory = () =>
 //   // axios.post("https://reorder-point-backendcode.onrender.com/api/reorder/upload/inventory");
 //   axios.post("http://localhost:5000/api/reorder/upload/inventory");
 
 export const syncOrders = () =>
-  // axios.post("https://reorder-point-backendcode.onrender.com/api/reorder/upload/orders");
-  axios.post("http://localhost:5000/api/reorder/upload/orders");
+  axios.post("https://reorder-point-backendcode.onrender.com/api/reorder/upload/orders");
+  // axios.post("http://localhost:5000/api/reorder/upload/orders");
 
 
 
 
 export const syncInventory = () =>
   // axios.post("/inventory/sync");
-axios.post("http://localhost:5000/api/inventory/sync");
+// axios.post("http://localhost:5000/api/inventory/sync");
+axios.post("https://reorder-point-backendcode.onrender.com/api/inventory/sync");
 
 export const fetchLastInventorySync = () =>
-  axios.get("http://localhost:5000/api/inventory/last-sync");
+  // axios.get("http://localhost:5000/api/inventory/last-sync");
+axios.post("https://reorder-point-backendcode.onrender.com/api/inventory/last-sync");
 

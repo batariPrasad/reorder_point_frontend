@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
+import { ProgressBar } from "primereact/progressbar"; // ✅ Add progress indicator
 import "./reorder.css";
 
 import ReorderCards from "./ReorderCard";
@@ -12,7 +13,7 @@ import {
   syncInventory,
   syncOrders,
   generateReorder,
-  fetchLastInventorySync, // ✅ REQUIRED
+  fetchLastInventorySync,
 } from "../api/reorderApi";
 
 /* ===================== SKU CONFIG ===================== */
@@ -64,6 +65,9 @@ export default function ReorderDashboard() {
   const [loadingInventory, setLoadingInventory] = useState(false);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingReorder, setLoadingReorder] = useState(false);
+  
+  // ✅ SYNC STATUS
+  const [syncStatus, setSyncStatus] = useState(null);
 
   const warehouses = [
     { label: "Bangalore Warehouse", value: "WH3" },
@@ -73,84 +77,90 @@ export default function ReorderDashboard() {
   /* ===================== TOAST ===================== */
 
   const showSuccess = (msg) =>
-    toast.current.show({ severity: "success", summary: "Success", detail: msg });
+    toast.current.show({ severity: "success", summary: "Success", detail: msg, life: 5000 });
 
   const showError = (msg) =>
-    toast.current.show({ severity: "error", summary: "Error", detail: msg });
+    toast.current.show({ severity: "error", summary: "Error", detail: msg, life: 5000 });
+
+  const showInfo = (msg) =>
+    toast.current.show({ severity: "info", summary: "Info", detail: msg, life: 5000 });
 
   /* ===================== LOAD DATA ===================== */
 
   const loadData = async () => {
-  try {
-    const res = await fetchReorder(warehouse);
-
-    const rows = res?.data?.data || [];
-
-    const sorted = rows.sort(
-      (a, b) => a.number_of_days - b.number_of_days
-    );
-
-    setData(sorted);
-  } catch (err) {
-    console.error("Reorder load error:", err);
-    showError("Failed to load reorder data");
-  }
-};
-
+    try {
+      const res = await fetchReorder(warehouse);
+      const rows = res?.data?.data || [];
+      const sorted = rows.sort((a, b) => a.number_of_days - b.number_of_days);
+      setData(sorted);
+    } catch (err) {
+      console.error("Reorder load error:", err);
+      showError("Failed to load reorder data");
+    }
+  };
 
   /* ✅ LOAD DATA + LAST INVENTORY SYNC (ON PAGE LOAD) */
-  // useEffect(() => {
-  //   loadData();
-
-  //   fetchLastInventorySync().then((res) => {
-  //     if (res?.data?.lastSync) {
-  //       setLastUpdated(new Date(res.data.lastSync));
-  //     }
-  //   });
-  // }, [warehouse]);
-
+  useEffect(() => {
+    fetchLastInventorySync().then((res) => {
+      if (res?.data?.lastSync) {
+        setLastUpdated(new Date(res.data.lastSync));
+      }
+    }).catch(err => {
+      console.error("Failed to fetch last sync time:", err);
+    });
+  }, []); // runs once
 
   useEffect(() => {
-  fetchLastInventorySync().then((res) => {
-    if (res?.data?.lastSync) {
-      setLastUpdated(new Date(res.data.lastSync));
-    }
-  });
-}, []); // 👈 runs once
-
-useEffect(() => {
-  loadData();
-}, [warehouse]);
+    loadData();
+  }, [warehouse]);
 
   /* ===================== SYNC HANDLERS ===================== */
 
- const handleSyncInventory = async () => {
-  setLoadingInventory(true);
-  try {
-    const res = await syncInventory();
-    await loadData();
+  const handleSyncInventory = async () => {
+    setLoadingInventory(true);
+    setSyncStatus("Syncing inventory...");
+    
+    try {
+      const res = await syncInventory();
+      await loadData();
 
-    // ✅ THIS is the ONLY place where timestamp changes
-    setLastUpdated(new Date(res.data.lastSync));
+      // ✅ Update timestamp
+      setLastUpdated(new Date(res.data.lastSync));
 
-    showSuccess(
-      `Inventory Synced | Success: ${res.data.success}, Failed: ${res.data.failed}`
-    );
-  } catch {
-    showError("Inventory sync failed");
-  } finally {
-    setLoadingInventory(false);
-  }
-};
-
+      showSuccess(
+        `Inventory Synced | Success: ${res.data.success}, Failed: ${res.data.failed}`
+      );
+      setSyncStatus(null);
+    } catch (err) {
+      console.error("Inventory sync error:", err);
+      showError(err.response?.data?.message || "Inventory sync failed");
+      setSyncStatus(null);
+    } finally {
+      setLoadingInventory(false);
+    }
+  };
 
   const handleSyncOrders = async () => {
     setLoadingOrders(true);
+    setSyncStatus("Fetching orders from Vinculum API... This may take several minutes for large datasets.");
+    
     try {
-      await syncOrders();
-      showSuccess("Orders synced successfully");
-    } catch {
-      showError("Orders sync failed");
+      const res = await syncOrders();
+      
+      if (res.data.success) {
+        const { pages_processed, inserted, raw_records } = res.data.data || {};
+        showSuccess(
+          `Orders synced successfully! Processed ${pages_processed} pages, inserted ${inserted} orders (${raw_records} raw records fetched)`
+        );
+        setSyncStatus(null);
+      } else {
+        showError(res.data.message || "Orders sync failed");
+        setSyncStatus(null);
+      }
+    } catch (err) {
+      console.error("Orders sync error:", err);
+      showError(err.response?.data?.message || "Orders sync failed");
+      setSyncStatus(null);
     } finally {
       setLoadingOrders(false);
     }
@@ -158,12 +168,17 @@ useEffect(() => {
 
   const handleGenerateReorder = async () => {
     setLoadingReorder(true);
+    setSyncStatus("Generating reorder calculations...");
+    
     try {
       await generateReorder();
       await loadData();
       showSuccess("Reorder generated successfully");
-    } catch {
-      showError("Failed to generate reorder");
+      setSyncStatus(null);
+    } catch (err) {
+      console.error("Generate reorder error:", err);
+      showError(err.response?.data?.message || "Failed to generate reorder");
+      setSyncStatus(null);
     } finally {
       setLoadingReorder(false);
     }
@@ -200,9 +215,17 @@ useEffect(() => {
       <h4>📦 Reorder Dashboard</h4>
 
       {lastUpdated && (
-        <small className="text-muted d-block mb-3">
-          Inventory last synced at: {lastUpdated.toLocaleString()}
+        <small className="text-muted d-block mb-2">
+          Inventory last synced: {lastUpdated.toLocaleString()}
         </small>
+      )}
+
+      {/* ✅ SYNC STATUS INDICATOR */}
+      {syncStatus && (
+        <div className="mb-3">
+          <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
+          <small className="text-info d-block mt-1">{syncStatus}</small>
+        </div>
       )}
 
       <div className="d-flex flex-wrap gap-2 mb-3">
@@ -211,13 +234,16 @@ useEffect(() => {
           icon="pi pi-refresh"
           loading={loadingInventory}
           onClick={handleSyncInventory}
+          disabled={loadingInventory || loadingOrders || loadingReorder}
         />
 
         <Button
           label="Sync Orders"
-          icon="pi pi-refresh"
+          icon="pi pi-download"
           loading={loadingOrders}
           onClick={handleSyncOrders}
+          disabled={loadingInventory || loadingOrders || loadingReorder}
+          severity="info"
         />
 
         <Button
@@ -225,12 +251,15 @@ useEffect(() => {
           icon="pi pi-cog"
           loading={loadingReorder}
           onClick={handleGenerateReorder}
+          disabled={loadingInventory || loadingOrders || loadingReorder}
+          severity="success"
         />
 
         <Dropdown
           value={warehouse}
           options={warehouses}
           onChange={(e) => setWarehouse(e.value)}
+          disabled={loadingInventory || loadingOrders || loadingReorder}
         />
 
         <InputText
@@ -245,6 +274,13 @@ useEffect(() => {
           outlined
           onClick={() => setTop10Only(!top10Only)}
         />
+      </div>
+
+      {/* ✅ DATA SUMMARY */}
+      <div className="mb-3">
+        <small className="text-muted">
+          Showing {visibleData.length} of {data.filter(r => allowedSkus.includes(r.sku_code)).length} products
+        </small>
       </div>
 
       <ReorderCards data={visibleData} />
