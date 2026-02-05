@@ -23,16 +23,23 @@ export default function ReorderTablePage() {
   ];
 
   // 🔹 Fetch data
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const res = await fetchReorder(warehouse);
-      const sorted = (res?.data || []).sort((a, b) => a.number_of_days - b.number_of_days);
-      setData(sorted);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const loadData = async () => {
+  try {
+    const res = await fetchReorder(warehouse);
+
+    const rows = res?.data?.data || [];
+
+    const sorted = rows.sort(
+      (a, b) => a.number_of_days - b.number_of_days
+    );
+
+    setData(sorted);
+  } catch (err) {
+    console.error("Reorder load error:", err);
+    showError("Failed to load reorder data");
+  }
+};
+
 
   useEffect(() => {
     loadData();

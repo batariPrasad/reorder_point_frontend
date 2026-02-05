@@ -81,16 +81,22 @@ export default function ReorderDashboard() {
   /* ===================== LOAD DATA ===================== */
 
   const loadData = async () => {
-    try {
-      const res = await fetchReorder(warehouse);
-      const sorted = (res?.data || []).sort(
-        (a, b) => a.number_of_days - b.number_of_days
-      );
-      setData(sorted);
-    } catch {
-      showError("Failed to load reorder data");
-    }
-  };
+  try {
+    const res = await fetchReorder(warehouse);
+
+    const rows = res?.data?.data || [];
+
+    const sorted = rows.sort(
+      (a, b) => a.number_of_days - b.number_of_days
+    );
+
+    setData(sorted);
+  } catch (err) {
+    console.error("Reorder load error:", err);
+    showError("Failed to load reorder data");
+  }
+};
+
 
   /* ✅ LOAD DATA + LAST INVENTORY SYNC (ON PAGE LOAD) */
   // useEffect(() => {
