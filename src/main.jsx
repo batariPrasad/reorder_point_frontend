@@ -10,11 +10,13 @@ import "primeflex/primeflex.css";
 import './index.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import ReorderDashboard from "./pages/ReorderDashboard";
 
 const container = document.getElementById("root");
 const root = createRoot(container); // only once
 root.render(
   <StrictMode>
-    <App />
+    {/* <App /> */}
+    <ReorderDashboard/>
   </StrictMode>
 );
