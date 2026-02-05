@@ -56,5 +56,5 @@ axios.post("https://reorder-point-backendcode.onrender.com/api/inventory/sync");
 
 export const fetchLastInventorySync = () =>
   // axios.get("http://localhost:5000/api/inventory/last-sync");
-axios.post("https://reorder-point-backendcode.onrender.com/api/inventory/last-sync");
+axios.get("https://reorder-point-backendcode.onrender.com/api/inventory/last-sync");
 

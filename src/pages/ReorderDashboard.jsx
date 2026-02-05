@@ -206,7 +206,7 @@ export default function ReorderDashboard() {
     <div className="container-fluid">
       <Toast ref={toast} />
 
-      <div className="dashboard-header fade-in">
+      {/* <div className="dashboard-header fade-in">
         <h4>📦 Reorder Dashboard</h4>
         {lastUpdated && (
           <small>
@@ -216,7 +216,7 @@ export default function ReorderDashboard() {
             })}
           </small>
         )}
-      </div>
+      </div> */}
 
       {syncStatus && (
         <div className="sync-status-container fade-in">

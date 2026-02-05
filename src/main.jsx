@@ -1,22 +1,24 @@
-import React from "react";
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+
 import App from "./App";
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
-import './index.css';
+import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import ReorderDashboard from "./pages/ReorderDashboard";
 
 const container = document.getElementById("root");
-const root = createRoot(container); // only once
+const root = createRoot(container);
+
 root.render(
   <StrictMode>
-    {/* <App /> */}
-    <ReorderDashboard/>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>
 );

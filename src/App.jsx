@@ -1,20 +1,27 @@
-import React, { useRef } from "react";
-import { Toast } from "primereact/toast";
-import { BrowserRouter } from "react-router-dom";
-import AppRoutes from "./AppRoutes";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-const App = () => {
-  const toast = useRef(null);
+import TopNavbar from "./components/layout/TopNavbar";
+import ReorderDashboard from "./pages/ReorderDashboard";
+// import other pages later
 
+export default function App() {
   return (
-    <BrowserRouter>
-      {/* Global Toast */}
-      <Toast ref={toast} />
+    <>
+      <TopNavbar />
 
-      {/* App with Navbar + Sidebar */}
-      <AppRoutes toast={toast} />
-    </BrowserRouter>
+      {/* Push content below fixed navbar */}
+      <div style={{ paddingTop: "70px" }}>
+        <Routes>
+          {/* Default route */}
+          <Route path="/" element={<Navigate to="/reorder" />} />
+
+          {/* Pages */}
+          <Route path="/reorder" element={<ReorderDashboard />} />
+          {/* <Route path="/upload" element={<Upload />} /> */}
+          {/* <Route path="/vendors" element={<Vendors />} /> */}
+        </Routes>
+      </div>
+    </>
   );
-};
-
-export default App;
+}
