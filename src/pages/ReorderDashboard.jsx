@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
-import { ProgressBar } from "primereact/progressbar"; // ✅ Add progress indicator
+import { ProgressBar } from "primereact/progressbar";
 import "./reorder.css";
 
 import ReorderCards from "./ReorderCard";
@@ -15,8 +15,6 @@ import {
   generateReorder,
   fetchLastInventorySync,
 } from "../api/reorderApi";
-
-/* ===================== SKU CONFIG ===================== */
 
 export const allowedSkus = [
   "1001033","1001049","1001062","1001007","1001059","1001003",
@@ -50,8 +48,6 @@ export const skuDescMap = {
   "ACC-04":"Comb",
 };
 
-/* ===================== COMPONENT ===================== */
-
 export default function ReorderDashboard() {
   const toast = useRef(null);
 
@@ -61,20 +57,16 @@ export default function ReorderDashboard() {
   const [top10Only, setTop10Only] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // ✅ ISOLATED LOADERS
   const [loadingInventory, setLoadingInventory] = useState(false);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [loadingReorder, setLoadingReorder] = useState(false);
   
-  // ✅ SYNC STATUS
   const [syncStatus, setSyncStatus] = useState(null);
 
   const warehouses = [
     { label: "Bangalore Warehouse", value: "WH3" },
     { label: "Pinjore Warehouse", value: "WH4" },
   ];
-
-  /* ===================== TOAST ===================== */
 
   const showSuccess = (msg) =>
     toast.current.show({ severity: "success", summary: "Success", detail: msg, life: 5000 });
@@ -84,8 +76,6 @@ export default function ReorderDashboard() {
 
   const showInfo = (msg) =>
     toast.current.show({ severity: "info", summary: "Info", detail: msg, life: 5000 });
-
-  /* ===================== LOAD DATA ===================== */
 
   const loadData = async () => {
     try {
@@ -99,7 +89,6 @@ export default function ReorderDashboard() {
     }
   };
 
-  /* ✅ LOAD DATA + LAST INVENTORY SYNC (ON PAGE LOAD) */
   useEffect(() => {
     fetchLastInventorySync().then((res) => {
       if (res?.data?.lastSync) {
@@ -108,13 +97,11 @@ export default function ReorderDashboard() {
     }).catch(err => {
       console.error("Failed to fetch last sync time:", err);
     });
-  }, []); // runs once
+  }, []);
 
   useEffect(() => {
     loadData();
   }, [warehouse]);
-
-  /* ===================== SYNC HANDLERS ===================== */
 
   const handleSyncInventory = async () => {
     setLoadingInventory(true);
@@ -124,7 +111,6 @@ export default function ReorderDashboard() {
       const res = await syncInventory();
       await loadData();
 
-      // ✅ Update timestamp
       setLastUpdated(new Date(res.data.lastSync));
 
       showSuccess(
@@ -184,8 +170,6 @@ export default function ReorderDashboard() {
     }
   };
 
-  /* ===================== FILTER ===================== */
-
   const visibleData = useMemo(() => {
     let result = data
       .filter((r) => allowedSkus.includes(r.sku_code))
@@ -206,84 +190,137 @@ export default function ReorderDashboard() {
     return result;
   }, [data, search, top10Only]);
 
-  /* ===================== UI ===================== */
+  const stats = useMemo(() => {
+    const filtered = data.filter((r) => allowedSkus.includes(r.sku_code));
+    return {
+      total: filtered.length,
+      critical: filtered.filter(r => r.number_of_days < 30).length,
+      warning: filtered.filter(r => r.number_of_days >= 30 && r.number_of_days < 45).length,
+      needsReorder: filtered.filter(r => r.suggested_reorder_qty > 0).length,
+    };
+  }, [data]);
+
+  const anyLoading = loadingInventory || loadingOrders || loadingReorder;
 
   return (
-    <div className="container-fluid p-3">
+    <div className="container-fluid">
       <Toast ref={toast} />
 
-      <h4>📦 Reorder Dashboard</h4>
+      <div className="dashboard-header fade-in">
+        <h4>📦 Reorder Dashboard</h4>
+        {lastUpdated && (
+          <small>
+            Last inventory sync: {lastUpdated.toLocaleString('en-IN', {
+              dateStyle: 'medium',
+              timeStyle: 'short'
+            })}
+          </small>
+        )}
+      </div>
 
-      {lastUpdated && (
-        <small className="text-muted d-block mb-2">
-          Inventory last synced: {lastUpdated.toLocaleString()}
-        </small>
-      )}
-
-      {/* ✅ SYNC STATUS INDICATOR */}
       {syncStatus && (
-        <div className="mb-3">
+        <div className="sync-status-container fade-in">
           <ProgressBar mode="indeterminate" style={{ height: '6px' }} />
-          <small className="text-info d-block mt-1">{syncStatus}</small>
+          <small className="text-info d-block mt-2">
+            <i className="pi pi-spin pi-spinner me-2"></i>
+            {syncStatus}
+          </small>
         </div>
       )}
 
-      <div className="d-flex flex-wrap gap-2 mb-3">
-        <Button
-          label="Sync Inventory"
-          icon="pi pi-refresh"
-          loading={loadingInventory}
-          onClick={handleSyncInventory}
-          disabled={loadingInventory || loadingOrders || loadingReorder}
-        />
+      <div className="control-panel fade-in">
+        <div className="d-flex flex-wrap gap-2">
+          <Button
+            label="Sync Inventory"
+            icon="pi pi-refresh"
+            loading={loadingInventory}
+            onClick={handleSyncInventory}
+            disabled={anyLoading}
+            className="p-button-primary"
+          />
 
-        <Button
-          label="Sync Orders"
-          icon="pi pi-download"
-          loading={loadingOrders}
-          onClick={handleSyncOrders}
-          disabled={loadingInventory || loadingOrders || loadingReorder}
-          severity="info"
-        />
+          <Button
+            label="Sync Orders"
+            icon="pi pi-download"
+            loading={loadingOrders}
+            onClick={handleSyncOrders}
+            disabled={anyLoading}
+            severity="info"
+          />
 
-        <Button
-          label="Generate Reorder"
-          icon="pi pi-cog"
-          loading={loadingReorder}
-          onClick={handleGenerateReorder}
-          disabled={loadingInventory || loadingOrders || loadingReorder}
-          severity="success"
-        />
+          <Button
+            label="Generate Reorder"
+            icon="pi pi-cog"
+            loading={loadingReorder}
+            onClick={handleGenerateReorder}
+            disabled={anyLoading}
+            severity="success"
+          />
 
-        <Dropdown
-          value={warehouse}
-          options={warehouses}
-          onChange={(e) => setWarehouse(e.value)}
-          disabled={loadingInventory || loadingOrders || loadingReorder}
-        />
+          <Dropdown
+            value={warehouse}
+            options={warehouses}
+            onChange={(e) => setWarehouse(e.value)}
+            disabled={anyLoading}
+            placeholder="Select Warehouse"
+          />
 
-        <InputText
-          placeholder="Search SKU / Product"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+          <InputText
+            placeholder="🔍 Search SKU / Product"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ minWidth: '200px' }}
+          />
 
-        <Button
-          label={top10Only ? "Show All" : "Top 10 Critical"}
-          severity="danger"
-          outlined
-          onClick={() => setTop10Only(!top10Only)}
-        />
+          <Button
+            label={top10Only ? "Show All" : "Top 10 Critical"}
+            icon={top10Only ? "pi pi-list" : "pi pi-exclamation-triangle"}
+            severity={top10Only ? "secondary" : "danger"}
+            outlined
+            onClick={() => setTop10Only(!top10Only)}
+          />
+        </div>
       </div>
 
-      {/* ✅ DATA SUMMARY */}
+      <div className="data-summary fade-in">
+        <div className="stat-item">
+          <div className="stat-value">{stats.total}</div>
+          <div className="stat-label">Total Products</div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-value" style={{ color: '#ef4444' }}>{stats.critical}</div>
+          <div className="stat-label">Critical (&lt;30d)</div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-value" style={{ color: '#f59e0b' }}>{stats.warning}</div>
+          <div className="stat-label">Warning (30-45d)</div>
+        </div>
+        <div className="stat-item">
+          <div className="stat-value" style={{ color: '#8b5cf6' }}>{stats.needsReorder}</div>
+          <div className="stat-label">Needs Reorder</div>
+        </div>
+      </div>
+
       <div className="mb-3">
         <small className="text-muted">
-          Showing {visibleData.length} of {data.filter(r => allowedSkus.includes(r.sku_code)).length} products
+          <i className="pi pi-filter me-1"></i>
+          Showing <strong>{visibleData.length}</strong> of <strong>{stats.total}</strong> products
+          {top10Only && " (Top 10 Critical)"}
+          {search && ` matching "${search}"`}
         </small>
       </div>
 
-      <ReorderCards data={visibleData} />
+      {visibleData.length > 0 ? (
+        <ReorderCards data={visibleData} />
+      ) : (
+        <div className="empty-state">
+          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-text">No products found</div>
+          <div className="empty-state-subtext">
+            {search ? "Try adjusting your search criteria" : "No data available for the selected warehouse"}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

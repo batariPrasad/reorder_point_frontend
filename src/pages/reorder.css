@@ -1,54 +1,571 @@
-/* Fixed width dialog */
-.sku-dialog {
-  width: 400px !important; /* Fixed width */
-  max-width: 95vw !important; /* fallback for very small screens */
+/* ===================== GLOBAL STYLES ===================== */
+:root {
+  --primary-color: #4f46e5;
+  --secondary-color: #0ea5e9;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --dark-bg: #1f2937;
+  --light-bg: #f9fafb;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --card-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --border-radius: 12px;
 }
 
-/* Dialog content */
-.sku-dialog .p-dialog-content {
-  display: flex;
-  flex-direction: column; /* stack image + text */
-  align-items: center;    /* center horizontally */
-  justify-content: center;
-  overflow-x: hidden !important; /* remove horizontal scroll */
-  overflow-y: auto;              /* vertical scroll if content too tall */
-  padding: 1rem;
+* {
   box-sizing: border-box;
-  text-align: center;            /* center all text */
-}
-/* Dialog content text block */
-.sku-dialog-content {
-  padding: 0;             /* remove extra padding */
-  margin: 0;              /* remove extra margin */
-  line-height: 1.2;       /* reduce line spacing */
-  font-size: 0.9rem;      /* slightly smaller text */
-  text-align: center;     /* keep it centered */
 }
 
-/* Optional: reduce spacing between paragraphs */
-.sku-dialog-content p {
-  margin: 0.2rem 0;       /* vertical margin between lines */
+body {
+  background-color: var(--light-bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding-top: 70px;
 }
 
-/* Image inside dialog */
-.sku-dialog-image {
-  max-width: 60%;   /* never exceed dialog width */
-  height: auto;
-  margin-bottom: 1rem;
-  display: block;
-  object-fit: contain;
+/* ===================== NAVBAR STYLES ===================== */
+.navbar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1rem;
 }
 
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
+.nav-link {
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem !important;
+  border-radius: 6px;
+  margin: 0 0.25rem;
+}
 
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
 
-/* Mobile optimization */
-@media (max-width: 576px) {
-  .sku-dialog {
-    width: 95vw;
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+/* ===================== CONTAINER ===================== */
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 1rem;
   }
+  
+  body {
+    padding-top: 60px;
+  }
+}
 
-  .sku-dialog-image {
-    max-width: 180px;
+/* ===================== DASHBOARD HEADER ===================== */
+.dashboard-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  box-shadow: var(--card-shadow);
+}
+
+.dashboard-header h4 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.dashboard-header small {
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-header h4 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ===================== CONTROL PANEL ===================== */
+.control-panel {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.control-panel .d-flex {
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .control-panel {
+    padding: 1rem;
+  }
+  
+  .control-panel .d-flex {
+    flex-direction: column;
+  }
+  
+  .control-panel .p-button,
+  .control-panel .p-dropdown,
+  .control-panel .p-inputtext {
+    width: 100% !important;
+  }
+}
+
+/* ===================== SYNC STATUS ===================== */
+.sync-status-container {
+  background: linear-gradient(135deg, #e0f2fe 0%, #ddd6fe 100%);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.sync-status-container .p-progressbar {
+  height: 8px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/* ===================== DATA SUMMARY ===================== */
+.data-summary {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.data-summary .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+.data-summary .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.data-summary .stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .data-summary {
+    padding: 1rem;
+  }
+  
+  .data-summary .stat-item {
+    flex: 1 1 45%;
+    min-width: 120px;
+  }
+}
+
+/* ===================== REORDER CARDS ===================== */
+.reorder-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 576px) {
+  .reorder-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.reorder-card {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.reorder-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);
+}
+
+.reorder-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  background: #f3f4f6;
+  padding: 1rem;
+}
+
+.reorder-card-body {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.reorder-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  min-height: 2.8em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reorder-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.stat-box {
+  background: #f9fafb;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-box-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-box-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stat-box-value.critical {
+  color: var(--danger-color);
+}
+
+.stat-box-value.warning {
+  color: var(--warning-color);
+}
+
+.stat-box-value.good {
+  color: var(--success-color);
+}
+
+/* ===================== SKU DIALOG ===================== */
+.sku-dialog {
+  width: 90vw;
+  max-width: 500px;
+}
+
+.sku-dialog .p-dialog-content {
+  padding: 2rem;
+}
+
+.sku-dialog-image {
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+  background: #f3f4f6;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.sku-dialog-content {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.sku-dialog-content p {
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sku-dialog-content p:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.sku-dialog-content b {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* ===================== TABLE STYLES ===================== */
+.p-datatable {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  transition: all 0.2s ease;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f3f4f6;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* ===================== UPLOAD PAGE ===================== */
+.upload-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.upload-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.upload-header h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.upload-area {
+  border: 2px dashed #d1d5db;
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #f9fafb;
+}
+
+.upload-area:hover {
+  border-color: var(--primary-color);
+  background: #f3f4f6;
+}
+
+.upload-area.drag-over {
+  border-color: var(--success-color);
+  background: #ecfdf5;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.upload-text {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.upload-text strong {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.upload-text strong:hover {
+  text-decoration: underline;
+}
+
+.file-info {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file-info-text {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.upload-actions button {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .upload-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .upload-area {
+    padding: 2rem 1rem;
+  }
+  
+  .upload-actions {
+    flex-direction: column;
+  }
+}
+
+/* ===================== BUTTONS ===================== */
+.p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.p-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.p-button:active {
+  transform: translateY(0);
+}
+
+/* ===================== FORM ELEMENTS ===================== */
+.p-inputtext,
+.p-dropdown {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 0.625rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.p-inputtext:focus,
+.p-dropdown:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* ===================== TAGS ===================== */
+.p-tag {
+  border-radius: 6px;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===================== EMPTY STATE ===================== */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-subtext {
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+/* ===================== RESPONSIVE UTILITIES ===================== */
+@media (max-width: 576px) {
+  h4 {
+    font-size: 1.25rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  .p-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
   }
 }
